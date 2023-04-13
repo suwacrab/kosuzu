@@ -114,7 +114,6 @@ int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name) {
 				const KOSUZU_FILENODE *node = kosuzu_archiveNodeGet(archive,node_index);
 				if(node->node_type == KOSUZU_NODETYPE_FOLDER) {
 					archive->fldr_current = node_index;
-					printf("changed directory -> %s\n",name_buffer);
 				}
 			} else {
 				archive->fldr_current = orig_folder;

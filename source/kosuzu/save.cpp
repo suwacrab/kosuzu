@@ -39,8 +39,6 @@ int kosuzu_saveFile(const char *out_filename,const KOSUZU_SAVEENTRY entries[],co
 		.out_filename = out_filename
 	};
 
-	info.flag_verbose = true;
-
 	return kosuzu_saveEX(&info);
 }
 int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {

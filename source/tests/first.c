@@ -57,7 +57,6 @@ static void write() {
 			.i.src_filename = "build.lua"
 		}
 	};
-	printf("%d\n",sizeof(KOSUZU_SAVEENTRY));
 
 	kosuzu_saveFile("data\\testF.ksz",entries,
 		sizeof(entries) / sizeof(KOSUZU_SAVEENTRY)
