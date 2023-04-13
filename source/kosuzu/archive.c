@@ -67,14 +67,14 @@ const KOSUZU_FILENODE *kosuzu_archiveNodeGet(KOSUZU_ARCHIVE *archive,size_t inde
 	return &archive->data_nodes[index];
 }
 int kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name) {
-	if(!archive) return -1;
+	if(!archive) return KOSUZU_NODE_INVALID;
 
 	const uint32_t name_hash = kosuzu_hashString(name);
 	const KOSUZU_FILENODE *cur_fldr = kosuzu_archiveNodeGetCurFldr(archive);
 
 	// loop through tree
 	const size_t fldr_size = cur_fldr->d.folder_size;
-	if(fldr_size == 0) return -1;
+	if(fldr_size == 0) return KOSUZU_NODE_INVALID;
 	for(int i=0; i<fldr_size; i++) {
 		const size_t node_index = archive->data_trees[
 			cur_fldr->d.folder_treeindex + i
@@ -85,7 +85,7 @@ int kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name) {
 		}
 	}
 
-	return -1;
+	return KOSUZU_NODE_INVALID;
 }
 
 /* folder functions ---------------------------------------------------------*/
@@ -110,7 +110,7 @@ int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name) {
 		if(cur_chara == '\\' || cur_chara == '\0') {
 			name_buffer[out_index++] = '\0';
 			const int node_index = kosuzu_archiveNodeFind(archive,name_buffer);
-			if(node_index != -1) {
+			if(node_index != KOSUZU_NODE_INVALID) {
 				const KOSUZU_FILENODE *node = kosuzu_archiveNodeGet(archive,node_index);
 				if(node->node_type == KOSUZU_NODETYPE_FOLDER) {
 					archive->fldr_current = node_index;
@@ -133,7 +133,7 @@ const KOSUZU_FILENODE *kosuzu_archiveFileSeek(KOSUZU_ARCHIVE *archive,const char
 	if(!archive) return NULL;
 
 	const int node_index = kosuzu_archiveNodeFind(archive,name);
-	if(node_index != -1) {
+	if(node_index != KOSUZU_NODE_INVALID) {
 		const KOSUZU_FILENODE *node = kosuzu_archiveNodeGet(archive,node_index);
 		switch(node->node_type) {
 			case KOSUZU_NODETYPE_USERDATA: {

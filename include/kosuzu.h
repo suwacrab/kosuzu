@@ -16,6 +16,7 @@ enum KOSUZU_NODETYPE {
 	KOSUZU_NODETYPE_USERDATA,
 	KOSUZU_NODETYPE_FOLDER
 };
+#define KOSUZU_NODE_INVALID (-1)
 
 /* types --------------------------------------------------------------------*/
 typedef struct KOSUZU_SAVEENTRY {

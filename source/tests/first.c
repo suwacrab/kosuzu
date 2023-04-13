@@ -16,9 +16,14 @@ void kosuzutest_first() {
 static void write() {
 	KOSUZU_SAVEENTRY entries[] = {
 		{
-			.name = "number", .arc_path = "\\",
-			.out_type = KOSUZU_NODETYPE_UINT,
-			.i.value_uint = 0x0DEADA55
+			.name = "width", .arc_path = "\\",
+			.out_type = KOSUZU_NODETYPE_INT,
+			.i.value_sint = 0x0A55DEAD
+		},
+		{
+			.name = "height", .arc_path = "\\",
+			.out_type = KOSUZU_NODETYPE_INT,
+			.i.value_sint = 0x0DEADA55
 		},
 		{ 
 			.name = "text", .arc_path = "\\",
@@ -105,8 +110,8 @@ static void read() {
 	
 	/* read a number ------------------------------------*/
 	kosuzu_archiveChdir(&archive,NULL);
-	const int num_node_idx = kosuzu_archiveNodeFind(&archive,"number");
-	if(num_node_idx) {
+	const int num_node_idx = kosuzu_archiveNodeFind(&archive,"height");
+	if(num_node_idx != KOSUZU_NODE_INVALID) {
 		const KOSUZU_FILENODE *num_node = kosuzu_archiveNodeGet(&archive,num_node_idx);
 		printf("number: %08Xh\n",num_node->d.value_uint);
 	}
