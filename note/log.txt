@@ -7,7 +7,7 @@ purpose file archival. a bit like the final evolution of the miniarc libraries
 that've been getting remade until this point.
 
 -- Basics -------------------------------------------------------------------@/
-an archive consists of 2 main parts:
+an archive consists of 4 main parts:
 	-	header section
 	-	node section
 	-	tree section
@@ -30,39 +30,23 @@ nodes can be of 4 types:
 		-	number of blocks in the folder
 
 -- writing to a file --------------------------------------------------------@/
-creating an archive requires 2 different parts: a list of folders and a list
-of files/data in memory, aka "blocks".
-all folders must be known before adding any files to an archive. additionally,
-there is a root folder (root\) that everything descends from.
+there is a root folder (root\) that everything descends from. this will always
+be in every archive as the very first node in each file.
 after a list of folders is generated, each folder gets a corresponding block
-array. the following algorithm's then followed:
-	-	loop through each block
-		*	if the folder the block belongs to is not found, then an error's
+array, which is essentially just an array of each folder's children. to add
+children to each block array, the following is done:
+	-	loop through each entry
+		*	if the folder the entry belongs to is not found, then an error's
 			produced.
 		*	if the folder is found, the block is added to the folder's block
 			array.
 
-after all blocks get their corresponding folders, they're then looped through
-again, and they're then finally written to a file on disk.
-the following two passes are done to write all nodes and their trees:
-	-	loop through each entry
-		*	add the entry as a node to the file
-	-	loop through each entry
-		*	if the entry is a folder, add an array of indices to each of the
-			folder's blocks to the tree section.
+after all blocks get their corresponding folders, they're then finally
+written to the disk.
 
-only one pass's done to write userdata to the file.
-	-	loop through entry list
-		*	if the entry is userdata, write the userdata to the data section.
-
-as for the user, they must submit a list of KOSUZU_SAVEENTRY structures, with
-each entry containing the following:
-	-	string	: name
-	-	string	: path in archive
-	-	bool	: whether or not entry is a file or data in RAM
-		*	if a file, the entry contains a pointer to a filename.
-		*	if raw data, the entry contains a pointer to the data, and the
-			data's size.
+as for the user, they must submit an array of KOSUZU_SAVEENTRY structures,
+with each essentially dictating what each node should be, what file they
+should be read from, etc.
 
 -- 2023/04/11 ---------------------------------------------------------------@/
 beginning.
@@ -72,3 +56,6 @@ first functional version.
 	*	can read & write .ksz files
 	*	not much else other than that	
 
+-- 2023/04/13 ---------------------------------------------------------------@/
+integer handling should be functional (also, KOSUZU_NODE_INVALID is used for
+invalid node indices rather than a hardcoded -1)
