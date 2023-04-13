@@ -46,7 +46,8 @@ if(kosuzu_archiveOpenFile(&archive,"map.ksz")) {
 }
 ```
 
-reads two int values 'width' and 'height' from the archive 'map.ksz'. often
-times, nodes that aren't even files are used in archives for storing smaller
-data.
+reading integers doesn't require using any file I/O: all you need to do is
+access the a node's struct directly.
+the above code reads two int values 'width' and 'height' from the archive
+'map.ksz'.
 
