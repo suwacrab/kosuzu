@@ -50,6 +50,7 @@ typedef struct KOSUZU_FILEHEADER {
 	uint32_t node_count;
 	uint32_t tree_count;
 	uint32_t data_size;
+
 	uint32_t offset_nodes;
 	uint32_t offset_trees;
 	uint32_t offset_data;
@@ -96,7 +97,8 @@ int kosuzu_archiveOpenFile(KOSUZU_ARCHIVE *archive,const char *src_filename);
 int kosuzu_archiveClose(KOSUZU_ARCHIVE *archive);
 
 int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name);
-int kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name);
+int kosuzu_archiveNodeFindIdx(KOSUZU_ARCHIVE *archive,const char *name);
+const KOSUZU_FILENODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name);
 const KOSUZU_FILENODE *kosuzu_archiveNodeGet(KOSUZU_ARCHIVE *archive,size_t index);
 const KOSUZU_FILENODE *kosuzu_archiveNodeGetCurFldr(KOSUZU_ARCHIVE *archive);
 const KOSUZU_FILENODE *kosuzu_archiveFileSeek(KOSUZU_ARCHIVE *archive,const char *name);

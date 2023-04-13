@@ -7,6 +7,7 @@
 static void write();
 static void read();
 
+/* functions ----------------------------------------------------------------*/
 void kosuzutest_first() {
 	write();
 	read();
@@ -110,9 +111,8 @@ static void read() {
 	
 	/* read a number ------------------------------------*/
 	kosuzu_archiveChdir(&archive,NULL);
-	const int num_node_idx = kosuzu_archiveNodeFind(&archive,"height");
-	if(num_node_idx != KOSUZU_NODE_INVALID) {
-		const KOSUZU_FILENODE *num_node = kosuzu_archiveNodeGet(&archive,num_node_idx);
+	const KOSUZU_FILENODE *num_node = kosuzu_archiveNodeFind(&archive,"height");
+	if(num_node) {
 		printf("number: %08Xh\n",num_node->d.value_uint);
 	}
 
