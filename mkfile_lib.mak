@@ -45,7 +45,6 @@ all: $(OUTPUT_LIB)
 # building library ----------------------------------------------------------@/
 $(OUTPUT_LIB): $(OBJS)
 	@echo linking library...
-	rm $@
 	$(AR) rcs $@ $^ $(OBJS_EXT)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
