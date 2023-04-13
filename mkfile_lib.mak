@@ -3,7 +3,6 @@ CC	:= gcc
 CXX	:= g++
 AR	:= ar
 
-#CWINFLAGS	:= -Wl,-subsystem,windows
 CWINFLAGS	:=
 CWARN		:= -Wshadow=local
 CINCLUDE	:= -Iinclude
@@ -30,11 +29,6 @@ SRCS_CPP	:= $(filter-out $(wildcard $(SRC_DIR)/tests/*),$(SRCS_CPP))
 OBJS		:= $(subst $(SRC_DIR),$(OBJ_DIR),$(SRCS_C:.c=.o))
 OBJS		+= $(subst $(SRC_DIR),$(OBJ_DIR),$(SRCS_CPP:.cpp=.o))
 
-OBJS_EXT	:= 
-#OBJS_EXT	:= $(shell find lib/d3d -name *.o)
-#OBJS_EXT	+= $(shell find lib/dxguid -name *.o)
-#OBJS_EXT	+= $(shell find lib/dinput8 -name *.o)
-
 DEPS		:= $(OBJS:.o=.d)
 OUTPUT_LIB	:= bin/libkosuzu.a
 
@@ -45,7 +39,7 @@ all: $(OUTPUT_LIB)
 # building library ----------------------------------------------------------@/
 $(OUTPUT_LIB): $(OBJS)
 	@echo linking library...
-	$(AR) rcs $@ $^ $(OBJS_EXT)
+	$(AR) rcs $@ $^
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@

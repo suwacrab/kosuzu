@@ -8,7 +8,6 @@ LDFLAGS	:= -s
 LDFLAGS	+= -Lbin 
 LDFLAGS	+= $(LIBS)
 
-#CWINFLAGS	:= -Wl,-subsystem,windows
 CWINFLAGS	:= 
 CWARN		:= -Wshadow=local
 CINCLUDE	:= -Iinclude
