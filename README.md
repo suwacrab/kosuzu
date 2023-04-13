@@ -33,14 +33,11 @@ it back to a file on disk 'output.bmp'.
 ```c++
 KOSUZU_ARCHIVE archive = {};
 if(kosuzu_archiveOpenFile(&archive,"map.ksz")) {
-	const int idx_width = kosuzu_archiveNodeFind(&archive,"width");
-	const int idx_height = kosuzu_archiveNodeFind(&archive,"height");
+	const KOSUZU_FILENODE *width = kosuzu_archiveNodeFind(&archive,"width");
+	const KOSUZU_FILENODE *height = kosuzu_archiveNodeFind(&archive,"height");
 
 	// check if nodes were actually found
-	if((idx_width != -1) && (idx_height != -1)) {
-		const KOSUZU_FILENODE *width = kosuzu_archiveNodeGet(&archive,idx_width);
-		const KOSUZU_FILENODE *height = kosuzu_archiveNodeGet(&archive,idx_height);
-		
+	if((width != NULL) && (height != NULL)) {
 		printf("width: %d\n",width->d.value_int);
 		printf("height: %d\n",height->d.value_int);
 	}
