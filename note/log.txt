@@ -1,0 +1,74 @@
+essentially, this program is meant for saving trees of data into a single file
+on the filesystem.
+
+said files should be able to get easily read by any C/C++ program.
+along with being used for save data, it should also be usable for general-
+purpose file archival. a bit like the final evolution of the miniarc libraries
+that've been getting remade until this point.
+
+-- Basics -------------------------------------------------------------------@/
+an archive consists of 2 main parts:
+	-	header section
+	-	node section
+	-	tree section
+	-	data section
+
+each node has:
+	-	a hashed name (u32)
+	-	type of their data
+	*	additional data that depends on the type
+
+nodes can be of 4 types:
+	*	integer (32-bit signed) & integer (32-bit unsigned)
+		-	value
+	*	userdata (variable size)
+		-	pointer in data section
+		-	size of the data in bytes
+	*	folder
+		-	index in the tree section of where the folder's blocks are
+			*	from there, each block is an index in the node section.
+		-	number of blocks in the folder
+
+-- writing to a file --------------------------------------------------------@/
+creating an archive requires 2 different parts: a list of folders and a list
+of files/data in memory, aka "blocks".
+all folders must be known before adding any files to an archive. additionally,
+there is a root folder (root\) that everything descends from.
+after a list of folders is generated, each folder gets a corresponding block
+array. the following algorithm's then followed:
+	-	loop through each block
+		*	if the folder the block belongs to is not found, then an error's
+			produced.
+		*	if the folder is found, the block is added to the folder's block
+			array.
+
+after all blocks get their corresponding folders, they're then looped through
+again, and they're then finally written to a file on disk.
+the following two passes are done to write all nodes and their trees:
+	-	loop through each entry
+		*	add the entry as a node to the file
+	-	loop through each entry
+		*	if the entry is a folder, add an array of indices to each of the
+			folder's blocks to the tree section.
+
+only one pass's done to write userdata to the file.
+	-	loop through entry list
+		*	if the entry is userdata, write the userdata to the data section.
+
+as for the user, they must submit a list of KOSUZU_SAVEENTRY structures, with
+each entry containing the following:
+	-	string	: name
+	-	string	: path in archive
+	-	bool	: whether or not entry is a file or data in RAM
+		*	if a file, the entry contains a pointer to a filename.
+		*	if raw data, the entry contains a pointer to the data, and the
+			data's size.
+
+-- 2023/04/11 ---------------------------------------------------------------@/
+beginning.
+
+-- 2023/04/12 ---------------------------------------------------------------@/
+first functional version.
+	*	can read & write .ksz files
+	*	not much else other than that	
+
