@@ -11,6 +11,7 @@ to build only the test or the library.
 KOSUZU_ARCHIVE archive = {};
 if(kosuzu_archiveOpenFile(&archive,"character.ksz")) {
 	kosuzu_archiveChdir(&archive,"cg");
+	
 	const KOSUZU_FILENODE *node = kosuzu_archiveFileSeek(&archive,"walk.bmp");
 	if(node) {
 		FILE *out_file = fopen("output.bmp","wb");
@@ -47,4 +48,8 @@ if(kosuzu_archiveOpenFile(&archive,"map.ksz")) {
 	kosuzu_archiveClose(&archive);
 }
 ```
+
+reads two int values 'width' and 'height' from the archive 'map.ksz'. often
+times, nodes that aren't even files are used in archives for storing smaller
+data.
 
