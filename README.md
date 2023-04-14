@@ -12,7 +12,7 @@ KOSUZU_ARCHIVE archive = {};
 if(kosuzu_archiveOpenFile(&archive,"character.ksz")) {
 	kosuzu_archiveChdir(&archive,"cg");
 	
-	const KOSUZU_FILENODE *node = kosuzu_archiveFileSeek(&archive,"walk.bmp");
+	const KOSUZU_NODE *node = kosuzu_archiveFileSeek(&archive,"walk.bmp");
 	if(node) {
 		FILE *out_file = fopen("output.bmp","wb");
 		char file_buffer;
@@ -33,8 +33,8 @@ it back to a file on disk 'output.bmp'.
 ```c++
 KOSUZU_ARCHIVE archive = {};
 if(kosuzu_archiveOpenFile(&archive,"map.ksz")) {
-	const KOSUZU_FILENODE *width = kosuzu_archiveNodeFind(&archive,"width");
-	const KOSUZU_FILENODE *height = kosuzu_archiveNodeFind(&archive,"height");
+	const KOSUZU_NODE *width = kosuzu_archiveNodeFind(&archive,"width");
+	const KOSUZU_NODE *height = kosuzu_archiveNodeFind(&archive,"height");
 
 	// check if nodes were actually found
 	if((width != NULL) && (height != NULL)) {

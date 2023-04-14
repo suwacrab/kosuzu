@@ -74,6 +74,7 @@ typedef struct KOSUZU_FILENODE {
 	} d;	
 } KOSUZU_FILENODE;
 
+typedef KOSUZU_FILENODE KOSUZU_NODE;
 typedef struct KOSUZU_ARCHIVE {
 	size_t node_count;
 	size_t tree_count;
@@ -81,7 +82,7 @@ typedef struct KOSUZU_ARCHIVE {
 
 	size_t fldr_current;
 
-	KOSUZU_FILENODE *data_nodes;
+	KOSUZU_NODE *data_nodes;
 	uint16_t *data_trees;
 	FILE *file_ptr;
 	int did_openFile;
@@ -98,10 +99,10 @@ int kosuzu_archiveClose(KOSUZU_ARCHIVE *archive);
 
 int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name);
 int kosuzu_archiveNodeFindIdx(KOSUZU_ARCHIVE *archive,const char *name);
-const KOSUZU_FILENODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name);
-const KOSUZU_FILENODE *kosuzu_archiveNodeGet(KOSUZU_ARCHIVE *archive,size_t index);
-const KOSUZU_FILENODE *kosuzu_archiveNodeGetCurFldr(KOSUZU_ARCHIVE *archive);
-const KOSUZU_FILENODE *kosuzu_archiveFileSeek(KOSUZU_ARCHIVE *archive,const char *name);
+const KOSUZU_NODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name);
+const KOSUZU_NODE *kosuzu_archiveNodeGet(KOSUZU_ARCHIVE *archive,size_t index);
+const KOSUZU_NODE *kosuzu_archiveNodeGetCurFldr(KOSUZU_ARCHIVE *archive);
+const KOSUZU_NODE *kosuzu_archiveFileSeek(KOSUZU_ARCHIVE *archive,const char *name);
 
 uint32_t kosuzu_hashString(const char *str);
 

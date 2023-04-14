@@ -15,6 +15,19 @@ void kosuzutest_first() {
 }
 
 static void write() {
+	/*
+		*	creates an archive with the follwing hierarchy:
+		-	int		: width		0x0A55DEAD
+		-	int		: height	0x0DEADA55
+		*	udata	: build
+		+	folder	: text
+			+	folder	: marina
+		+	folder	: cg
+			+	marina
+				*	udata	: idle
+				*	udata	: stand
+				*	udata	: walk
+	*/
 	KOSUZU_SAVEENTRY entries[] = {
 		{
 			.name = "width", .arc_path = "\\",
@@ -92,7 +105,7 @@ static void read() {
 	for(int f=0; f<3; f++) {
 		const char *src_filename = filenames[0][f];
 		const char *out_filename = filenames[1][f];
-		const KOSUZU_FILENODE *img_node = kosuzu_archiveFileSeek(&archive,src_filename);
+		const KOSUZU_NODE *img_node = kosuzu_archiveFileSeek(&archive,src_filename);
 		if(img_node) {
 			FILE *out_file = fopen(out_filename,"wb");
 			if(!out_file) {
@@ -111,7 +124,7 @@ static void read() {
 	
 	/* read a number ------------------------------------*/
 	kosuzu_archiveChdir(&archive,NULL);
-	const KOSUZU_FILENODE *num_node = kosuzu_archiveNodeFind(&archive,"height");
+	const KOSUZU_NODE *num_node = kosuzu_archiveNodeFind(&archive,"height");
 	if(num_node) {
 		printf("number: %08Xh\n",num_node->d.value_uint);
 	}
