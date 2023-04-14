@@ -116,7 +116,6 @@ int kosuzu_archiveOpenFile(KOSUZU_ARCHIVE *archive,const char *src_filename);
 int kosuzu_archiveClose(KOSUZU_ARCHIVE *archive);
 
 int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name);
-int kosuzu_archiveNodeFindIdx(KOSUZU_ARCHIVE *archive,const char *name);
 const KOSUZU_NODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name);
 const KOSUZU_NODE *kosuzu_archiveNodeGet(KOSUZU_ARCHIVE *archive,size_t index);
 const KOSUZU_NODE *kosuzu_archiveNodeGetCurFldr(KOSUZU_ARCHIVE *archive);
