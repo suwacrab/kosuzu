@@ -28,10 +28,19 @@ int kosuzu_archiveOpen(KOSUZU_ARCHIVE *archive,FILE *file_ptr) {
 	data_nodes = malloc(sizeof(KOSUZU_NODE) * archive->node_count);
 	data_trees = malloc(sizeof(uint16_t) * archive->tree_count);
 
-	fseek(file_ptr,file_header.offset_nodes,SEEK_SET);
-	fread(data_nodes,sizeof(KOSUZU_NODE),archive->node_count,file_ptr);
 	fseek(file_ptr,file_header.offset_trees,SEEK_SET);
 	fread(data_trees,sizeof(uint16_t),archive->tree_count,file_ptr);
+
+	fseek(file_ptr,file_header.offset_nodes,SEEK_SET);
+	for(size_t i=0; i<archive->node_count; i++) {
+		KOSUZU_NODE *out_node = &data_nodes[i];
+		KOSUZU_FILENODE src_node = {};
+		fread(&src_node,sizeof(src_node),1,file_ptr);
+		out_node->name_hash = src_node.name_hash;
+		out_node->node_type = src_node.node_type;
+		out_node->node_index = i;
+		memcpy(&out_node->d,&src_node.d,sizeof(out_node->d));
+	}
 
 	archive->data_nodes = data_nodes;
 	archive->data_trees = data_trees;
@@ -71,32 +80,24 @@ const KOSUZU_NODE *kosuzu_archiveNodeGet(KOSUZU_ARCHIVE *archive,size_t index) {
 	if(index < 0) return NULL;
 	return &archive->data_nodes[index];
 }
-int kosuzu_archiveNodeFindIdx(KOSUZU_ARCHIVE *archive,const char *name) {
-	if(!archive) return KOSUZU_NODE_INVALID;
+const KOSUZU_NODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name) {
+	if(!archive) return NULL;
 
 	const uint32_t name_hash = kosuzu_hashString(name);
 	const KOSUZU_NODE *cur_fldr = kosuzu_archiveNodeGetCurFldr(archive);
 
 	// loop through tree
 	const size_t fldr_size = cur_fldr->d.folder_size;
-	if(fldr_size == 0) return KOSUZU_NODE_INVALID;
 	for(int i=0; i<fldr_size; i++) {
 		const size_t node_index = archive->data_trees[
 			cur_fldr->d.folder_treeindex + i
 		];
 		const KOSUZU_NODE *node = kosuzu_archiveNodeGet(archive,node_index);
 		if(node->name_hash == name_hash) {
-			return node_index;
+			return node;
 		}
 	}
 
-	return KOSUZU_NODE_INVALID;
-}
-const KOSUZU_NODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name) {
-	int index = kosuzu_archiveNodeFindIdx(archive,name);
-	if(index != KOSUZU_NODE_INVALID) {
-		return kosuzu_archiveNodeGet(archive,index);
-	}
 	return NULL;
 }
 
@@ -121,12 +122,10 @@ int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name) {
 		char cur_chara = dir_name[inp_index++];
 		if(cur_chara == '\\' || cur_chara == '\0') {
 			name_buffer[out_index++] = '\0';
-			const int node_index = kosuzu_archiveNodeFindIdx(archive,name_buffer);
-			if(node_index != KOSUZU_NODE_INVALID) {
-				const KOSUZU_NODE *node = kosuzu_archiveNodeGet(archive,node_index);
-				if(node->node_type == KOSUZU_NODETYPE_FOLDER) {
-					archive->fldr_current = node_index;
-				}
+			const KOSUZU_NODE *node = kosuzu_archiveNodeFind(archive,name_buffer);
+			if(node && node->node_type == KOSUZU_NODETYPE_FOLDER) {
+				archive->fldr_current = node->node_index;
+				printf("changed directory -> %s\n",name_buffer);
 			} else {
 				archive->fldr_current = orig_folder;
 				return false;

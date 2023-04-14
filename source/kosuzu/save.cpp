@@ -58,6 +58,10 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 		std::puts("kosuzu: save error: save info has 0 entries");
 		return false;
 	}
+	if(entry_count > 0x7FFF) {
+		std::puts("kosuzu: save error: save info has too many entries");
+		return false;
+	}
 
 	/* setup folder list --------------------------------*/
 	std::vector<FOLDER_INFO> folder_infolist;
@@ -299,7 +303,7 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 				offset /= sizeof(KOSUZU_SAVEENTRY); // regular integer.
 				offset += 1; // since 1st is root node.
 				real_offset = offset & 0xFFFF;
-				if(offset > 0xFFFF) {
+				if(offset > 0x7FFF) {
 					puts("kosuzu: save error: too many nodes");
 					std::exit(-1);
 				}

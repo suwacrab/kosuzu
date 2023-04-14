@@ -74,7 +74,25 @@ typedef struct KOSUZU_FILENODE {
 	} d;	
 } KOSUZU_FILENODE;
 
-typedef KOSUZU_FILENODE KOSUZU_NODE;
+typedef struct KOSUZU_NODE {
+	uint32_t name_hash;
+	uint16_t node_type;
+	int16_t node_index;
+	union {
+		int32_t		value_sint;
+		uint32_t	value_uint;
+
+		struct {
+			uint32_t udata_offset;
+			uint32_t udata_size;
+		};
+
+		struct {
+			uint32_t folder_treeindex;
+			uint32_t folder_size;
+		};
+	} d;	
+} KOSUZU_NODE;
 typedef struct KOSUZU_ARCHIVE {
 	size_t node_count;
 	size_t tree_count;
