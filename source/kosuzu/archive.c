@@ -125,7 +125,6 @@ int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name) {
 			const KOSUZU_NODE *node = kosuzu_archiveNodeFind(archive,name_buffer);
 			if(node && node->node_type == KOSUZU_NODETYPE_FOLDER) {
 				archive->fldr_current = node->node_index;
-				printf("changed directory -> %s\n",name_buffer);
 			} else {
 				archive->fldr_current = orig_folder;
 				return false;
