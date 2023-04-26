@@ -19,10 +19,10 @@ static void write() {
 		*	creates an archive with the follwing hierarchy:
 		-	int		: width		0x0A55DEAD
 		-	int		: height	0x0DEADA55
-		*	udata	: build
 		+	folder	: text
-			+	folder	: marina
+			*	udata	: build
 		+	folder	: cg
+			+	kosuzu
 			+	marina
 				*	udata	: idle
 				*	udata	: stand
@@ -32,14 +32,14 @@ static void write() {
 	KOSUZU_SAVEQUEUE queue = {};
 
 	kosuzu_savequeue_setup(&queue,entries,32);
-	kosuzu_savequeue_addFolder(&queue,"\\","cg");
 	kosuzu_savequeue_addFolder(&queue,"\\","text");
+	kosuzu_savequeue_addFolder(&queue,"\\","cg");
 	kosuzu_savequeue_addFolder(&queue,"\\cg\\","marina");
-	kosuzu_savequeue_addFolder(&queue,"\\text\\","marina");
+	kosuzu_savequeue_addFolder(&queue,"\\cg\\","kosuzu");
 	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","idle","workdata\\mrn_idle.gif");
 	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","stand","workdata\\mrn_stand.gif");
 	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","walk","workdata\\mrn_walk.gif");
-	kosuzu_savequeue_addFile(&queue,"\\","build","build.lua");
+	kosuzu_savequeue_addFile(&queue,"\\text\\","build","build.lua");
 	kosuzu_savequeue_addUint(&queue,"\\","width",0x0A55DEAD);
 	kosuzu_savequeue_addUint(&queue,"\\","height",0xDEADA55);
 
@@ -92,6 +92,9 @@ static void read() {
 	const KOSUZU_NODE *num_node = kosuzu_archiveNodeFind(&archive,"height");
 	if(num_node) {
 		printf("number: %08Xh\n",num_node->d.value_uint);
+	} else {
+		puts("test 'first' failed: number node not found");
+		exit(-1);
 	}
 
 	/* close archive ------------------------------------*/

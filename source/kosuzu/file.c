@@ -2,13 +2,9 @@
 #include <stdio.h>
 #include "kosuzu.h"
 
-static bool file_checkOK(KOSUZU_FILE *file) {
-	if(!file) return false;
-	if(!file->archive_ptr) return false;
-	if(!file->file_node) return false;
-	return true;
-}
+static bool file_checkOK(KOSUZU_FILE *file);
 
+/* I/O functions ------------------------------------------------------------*/
 int kosuzu_file_close(KOSUZU_FILE *file) {
 	if(!file_checkOK(file)) return false;
 	if(!file->is_open) return false;
@@ -39,12 +35,19 @@ int kosuzu_file_read(KOSUZU_FILE *file,void *output,size_t size) {
 	return true;
 }
 
-/* misc functions -----------------------------------------------------------*/
 int kosuzu_file_eof(KOSUZU_FILE *file) {
 	if(!file_checkOK(file)) return false;
 	if(!file->is_open) return false;
 
 	if(file->file_offset >= file->file_size) return true;
 	return false;
+}
+
+/* misc functions -----------------------------------------------------------*/
+static bool file_checkOK(KOSUZU_FILE *file) {
+	if(!file) return false;
+	if(!file->archive_ptr) return false;
+	if(!file->file_node) return false;
+	return true;
 }
 

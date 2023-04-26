@@ -171,7 +171,6 @@ KOSUZU_FILE *kosuzu_archiveFileOpen(KOSUZU_ARCHIVE *archive,const char *name) {
 			}
 			default: { break; }
 		}
-		/* if file handle is present, use it. -----------*/
 		file->is_open = true;
 		file->archive_ptr = archive;
 		file->file_node = node;
