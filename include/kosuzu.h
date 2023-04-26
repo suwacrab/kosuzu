@@ -17,6 +17,11 @@ enum KOSUZU_NODETYPE {
 	KOSUZU_NODETYPE_FOLDER
 };
 #define KOSUZU_NODE_INVALID (-1)
+#define KOSUZU_FILE_MAXOPEN (16)
+
+#define KOSUZU_SEEK_SET (0)
+#define KOSUZU_SEEK_CUR (1)
+#define KOSUZU_SEEK_END (2)
 
 /* types --------------------------------------------------------------------*/
 typedef struct KOSUZU_SAVEENTRY {
@@ -98,6 +103,14 @@ typedef struct KOSUZU_NODE {
 		};
 	} d;	
 } KOSUZU_NODE;
+typedef struct KOSUZU_FILE {
+	struct KOSUZU_ARCHIVE *archive_ptr;
+	const KOSUZU_NODE *file_node;
+	size_t file_offset;
+	size_t file_size;
+
+	int is_open;
+} KOSUZU_FILE;
 typedef struct KOSUZU_ARCHIVE {
 	size_t node_count;
 	size_t tree_count;
@@ -109,6 +122,8 @@ typedef struct KOSUZU_ARCHIVE {
 	uint16_t *data_trees;
 	FILE *file_ptr;
 	int did_openFile;
+
+	KOSUZU_FILE file_list[KOSUZU_FILE_MAXOPEN];
 } KOSUZU_ARCHIVE;
 
 /* functions ----------------------------------------------------------------*/
@@ -132,7 +147,11 @@ int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name);
 const KOSUZU_NODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name);
 const KOSUZU_NODE *kosuzu_archiveNodeGet(KOSUZU_ARCHIVE *archive,size_t index);
 const KOSUZU_NODE *kosuzu_archiveNodeGetCurFldr(KOSUZU_ARCHIVE *archive);
-const KOSUZU_NODE *kosuzu_archiveFileSeek(KOSUZU_ARCHIVE *archive,const char *name);
+KOSUZU_FILE *kosuzu_archiveFileOpen(KOSUZU_ARCHIVE *archive,const char *name);
+
+int kosuzu_file_close(KOSUZU_FILE *file);
+int kosuzu_file_seek(KOSUZU_FILE *file,long int offset,int whence);
+int kosuzu_file_read(KOSUZU_FILE *file,void *output,size_t size);
 
 uint32_t kosuzu_hashString(const char *str);
 

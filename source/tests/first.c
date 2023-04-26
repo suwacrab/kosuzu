@@ -67,10 +67,10 @@ static void read() {
 	};
 
 	for(int f=0; f<3; f++) {
-		const char *src_filename = filenames[0][f];
+		const char *src_name = filenames[0][f];
 		const char *out_filename = filenames[1][f];
-		const KOSUZU_NODE *img_node = kosuzu_archiveFileSeek(&archive,src_filename);
-		if(img_node) {
+		KOSUZU_FILE *img_file = kosuzu_archiveFileOpen(&archive,src_name);
+		if(img_file) {
 			FILE *out_file = fopen(out_filename,"wb");
 			if(!out_file) {
 				puts("test 'first' failed: couldn't open output file");
@@ -78,12 +78,13 @@ static void read() {
 			}
 
 			char dat_buf;
-			for(size_t i=0; i<img_node->d.udata_size; i++) {
-				fread(&dat_buf,sizeof(char),1,archive.file_ptr);
+			for(size_t i=0; i<img_file->file_size; i++) {
+				kosuzu_file_read(img_file,&dat_buf,sizeof(char));
 				fwrite(&dat_buf,sizeof(char),1,out_file);
 			}
 			fclose(out_file);
 		}
+		kosuzu_file_close(img_file);
 	}
 	
 	/* read a number ------------------------------------*/

@@ -4,7 +4,7 @@ CXX	:= g++
 AR	:= ar
 
 CWINFLAGS	:=
-CWARN		:= -Wshadow=local
+CWARN		:= -Wshadow
 CINCLUDE	:= -Iinclude
 
 CFLAGS		:= -std=c99 $(CINCLUDE)

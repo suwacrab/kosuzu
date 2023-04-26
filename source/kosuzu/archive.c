@@ -22,6 +22,10 @@ int kosuzu_archiveOpen(KOSUZU_ARCHIVE *archive,FILE *file_ptr) {
 	archive->file_ptr = file_ptr;
 	archive->did_openFile = false;
 
+	for(size_t i=0; i<KOSUZU_FILE_MAXOPEN; i++) {
+		archive->file_list[i].is_open = false;
+	}
+
 	/* allocate stuff -----------------------------------*/
 	KOSUZU_NODE *data_nodes = NULL;
 	uint16_t *data_trees = NULL;
@@ -139,15 +143,27 @@ int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name) {
 	archive->fldr_current = orig_folder;
 	return false;
 }
-const KOSUZU_NODE *kosuzu_archiveFileSeek(KOSUZU_ARCHIVE *archive,const char *name) {
+KOSUZU_FILE *kosuzu_archiveFileOpen(KOSUZU_ARCHIVE *archive,const char *name) {
 	if(!archive) return NULL;
 
+	/* search for available file handle -----------------*/
+	KOSUZU_FILE *file = NULL;
+	for(size_t i=0; i<KOSUZU_FILE_MAXOPEN; i++) {
+		KOSUZU_FILE *cur_file = &archive->file_list[i];
+		if(!cur_file->is_open) {
+			file = cur_file;
+			break;
+		}
+	}
+	if(!file) return NULL;
+
+	/* search for node ----------------------------------*/
 	const KOSUZU_NODE *node = kosuzu_archiveNodeFind(archive,name);
 	if(node) {
 		switch(node->node_type) {
 			case KOSUZU_NODETYPE_USERDATA: {
-				FILE *file = archive->file_ptr;
-				fseek(file,
+				FILE *main_file = archive->file_ptr;
+				fseek(main_file,
 					node->d.udata_offset + archive->data_offset,
 					SEEK_SET
 				);
@@ -155,7 +171,13 @@ const KOSUZU_NODE *kosuzu_archiveFileSeek(KOSUZU_ARCHIVE *archive,const char *na
 			}
 			default: { break; }
 		}
-		return node;
+		/* if file handle is present, use it. -----------*/
+		file->is_open = true;
+		file->archive_ptr = archive;
+		file->file_node = node;
+		file->file_offset = 0;
+		file->file_size = node->d.udata_size;
+		return file;
 	}
 	return NULL;
 }
