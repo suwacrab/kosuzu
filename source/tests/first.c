@@ -83,8 +83,8 @@ static void read() {
 				fwrite(&dat_buf,sizeof(char),1,out_file);
 			}
 			fclose(out_file);
+			kosuzu_file_close(img_file);
 		}
-		kosuzu_file_close(img_file);
 	}
 	
 	/* read a number ------------------------------------*/

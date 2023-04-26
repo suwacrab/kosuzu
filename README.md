@@ -12,15 +12,16 @@ KOSUZU_ARCHIVE archive = {};
 if(kosuzu_archiveOpenFile(&archive,"character.ksz")) {
 	kosuzu_archiveChdir(&archive,"cg");
 	
-	const KOSUZU_NODE *node = kosuzu_archiveFileSeek(&archive,"walk.bmp");
-	if(node) {
+	KOSUZU_FILE *src_file = kosuzu_archiveFileOpen(&archive,"walk.bmp");
+	if(src_file) {
 		FILE *out_file = fopen("output.bmp","wb");
 		char file_buffer;
-		for(size_t i=0; i<node->d.udata_size; i++) {
-			fread(&file_buffer,1,sizeof(char),archive.file_ptr);
+		for(size_t i=0; i<src_file->file_size; i++) {
+			kosuzu_file_read(src_file,&file_buffer,sizeof(char));
 			fwrite(&file_buffer,1,sizeof(char),out_file);
 		}
 		fclose(out_file);
+		kosuzu_file_close(src_file);
 	}
 
 	kosuzu_archiveClose(&archive);
