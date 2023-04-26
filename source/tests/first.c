@@ -28,60 +28,22 @@ static void write() {
 				*	udata	: stand
 				*	udata	: walk
 	*/
-	/*
-	KOSUZU_SAVEENTRY entries[] = {
-		{
-			.name = "width", .arc_path = "\\",
-			.out_type = KOSUZU_NODETYPE_INT,
-			.i.value_sint = 0x0A55DEAD
-		},
-		{
-			.name = "height", .arc_path = "\\",
-			.out_type = KOSUZU_NODETYPE_INT,
-			.i.value_sint = 0x0DEADA55
-		},
-		{ 
-			.name = "text", .arc_path = "\\",
-			.out_type = KOSUZU_NODETYPE_FOLDER,
-		},
-		{ 
-			.name = "marina", .arc_path = "\\text\\",
-			.out_type = KOSUZU_NODETYPE_FOLDER,
-		},
-		{ 
-			.name = "cg", .arc_path = "\\",
-			.out_type = KOSUZU_NODETYPE_FOLDER,
-		},
-		{ 
-			.name = "marina", .arc_path = "\\cg\\",
-			.out_type = KOSUZU_NODETYPE_FOLDER,
-		},
-		{
-			.name = "idle", .arc_path = "\\cg\\marina\\",
-			.is_file = true, .out_type = KOSUZU_NODETYPE_USERDATA,
-			.i.src_filename = "workdata\\mrn_idle.gif"
-		},
-		{
-			.name = "stand", .arc_path = "\\cg\\marina\\",
-			.is_file = true, .out_type = KOSUZU_NODETYPE_USERDATA,
-			.i.src_filename = "workdata\\mrn_stand.gif"
-		},
-		{
-			.name = "walk", .arc_path = "\\cg\\marina\\",
-			.is_file = true, .out_type = KOSUZU_NODETYPE_USERDATA,
-			.i.src_filename = "workdata\\mrn_walk.gif"
-		},
-		{
-			.name = "build", .arc_path = "\\",
-			.is_file = true, .out_type = KOSUZU_NODETYPE_USERDATA,
-			.i.src_filename = "build.lua"
-		}
-	};
-	*/
+	KOSUZU_SAVEENTRY entries[32] = {};
+	KOSUZU_SAVEQUEUE queue = {};
 
-	kosuzu_saveFile("data\\testF.ksz",entries,
-		sizeof(entries) / sizeof(KOSUZU_SAVEENTRY)
-	);
+	kosuzu_savequeue_setup(&queue,entries,32);
+	kosuzu_savequeue_addFolder(&queue,"\\","cg");
+	kosuzu_savequeue_addFolder(&queue,"\\","text");
+	kosuzu_savequeue_addFolder(&queue,"\\cg\\","marina");
+	kosuzu_savequeue_addFolder(&queue,"\\text\\","marina");
+	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","idle","workdata\\mrn_idle.gif");
+	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","stand","workdata\\mrn_stand.gif");
+	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","walk","workdata\\mrn_walk.gif");
+	kosuzu_savequeue_addFile(&queue,"\\","build","build.lua");
+	kosuzu_savequeue_addUint(&queue,"\\","width",0x0A55DEAD);
+	kosuzu_savequeue_addUint(&queue,"\\","height",0xDEADA55);
+
+	kosuzu_savequeue_saveFile(&queue,"data\\testF.ksz");
 }
 static void read() {
 	KOSUZU_ARCHIVE archive;

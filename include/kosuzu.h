@@ -48,7 +48,7 @@ typedef struct KOSUZU_SAVEQUEUE {
 	KOSUZU_SAVEENTRY *entry_ptr;
 	size_t entry_count;
 	size_t entry_max;
-};
+} KOSUZU_SAVEQUEUE;
 
 typedef struct KOSUZU_FILEHEADER {
 	char magic[8];
@@ -113,10 +113,12 @@ typedef struct KOSUZU_ARCHIVE {
 
 /* functions ----------------------------------------------------------------*/
 int kosuzu_savequeue_setup(KOSUZU_SAVEQUEUE *queue,KOSUZU_SAVEENTRY entries[],const size_t entry_max);
-int kosuzu_savequeue_addFile(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name,const char *filename);
+int kosuzu_savequeue_addEntry(KOSUZU_SAVEQUEUE *queue,const KOSUZU_SAVEENTRY *entry);
 int kosuzu_savequeue_addFolder(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name);
+int kosuzu_savequeue_addFile(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name,const char *filename);
 int kosuzu_savequeue_addSint(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name,const int32_t num);
 int kosuzu_savequeue_addUint(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name,const uint32_t num);
+int kosuzu_savequeue_saveFile(KOSUZU_SAVEQUEUE *queue,const char *filename);
 
 int kosuzu_save(void **out_buffer, const KOSUZU_SAVEENTRY entries[],const size_t entry_count);
 int kosuzu_saveFile(const char *out_filename,const KOSUZU_SAVEENTRY entries[],const size_t entry_count);
