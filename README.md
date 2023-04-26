@@ -38,7 +38,7 @@ if(kosuzu_archiveOpenFile(&archive,"map.ksz")) {
 	const KOSUZU_NODE *height = kosuzu_archiveNodeFind(&archive,"height");
 
 	// check if nodes were actually found
-	if((width != NULL) && (height != NULL)) {
+	if(width && height) {
 		printf("width: %d\n",width->d.value_int);
 		printf("height: %d\n",height->d.value_int);
 	}
