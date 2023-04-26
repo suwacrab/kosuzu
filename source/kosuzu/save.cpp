@@ -328,7 +328,7 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 					}
 					std::fseek(file,0,SEEK_END);
 					file_size = std::ftell(file);
-					std::fseek(file,0,SEEK_SET);
+					std::rewind(file);
 
 					for(size_t i=0; i<file_size; i++) {
 						std::fread(&chr_buf,sizeof(char),1,file);

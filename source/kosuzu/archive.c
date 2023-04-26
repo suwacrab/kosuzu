@@ -12,7 +12,7 @@ int kosuzu_archiveOpen(KOSUZU_ARCHIVE *archive,FILE *file_ptr) {
 
 	/* setup archive info -------------------------------*/
 	KOSUZU_FILEHEADER file_header = {};
-	fseek(file_ptr,0,SEEK_SET);
+	rewind(file_ptr);
 	fread(&file_header,sizeof(KOSUZU_FILEHEADER),1,file_ptr);
 
 	archive->node_count = file_header.node_count;
