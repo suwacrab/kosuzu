@@ -28,6 +28,7 @@ static void write() {
 				*	udata	: stand
 				*	udata	: walk
 	*/
+	/*
 	KOSUZU_SAVEENTRY entries[] = {
 		{
 			.name = "width", .arc_path = "\\",
@@ -76,6 +77,7 @@ static void write() {
 			.i.src_filename = "build.lua"
 		}
 	};
+	*/
 
 	kosuzu_saveFile("data\\testF.ksz",entries,
 		sizeof(entries) / sizeof(KOSUZU_SAVEENTRY)

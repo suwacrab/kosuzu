@@ -59,3 +59,10 @@ first functional version.
 -- 2023/04/13 ---------------------------------------------------------------@/
 integer handling should be functional (also, KOSUZU_NODE_INVALID is used for
 invalid node indices rather than a hardcoded -1)
+
+-- 2023/04/15 ---------------------------------------------------------------@/
+KOSUZU_NODE is used on the client's side of things, now. KOSUZU_FILENODE is
+only used while loading & saving nodes.
+next main goal should be to make saving easier from the C++ side: manually
+writing structs could be replaced with a simple stack structure that adds
+entries to a list.
