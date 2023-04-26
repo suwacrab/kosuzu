@@ -23,9 +23,28 @@ int kosuzu_file_close(KOSUZU_FILE *file) {
 int kosuzu_file_read(KOSUZU_FILE *file,void *output,size_t size) {
 	if(!file_checkOK(file)) return false;
 	if(!file->is_open) return false;
+
 	const KOSUZU_ARCHIVE *archive = file->archive_ptr;
-	fread(output,sizeof(char),size,archive->file_ptr);
-	file->file_offset += size;
+	size_t read_size = size;
+
+	/* make sure to not read past file ------------------*/
+	if(kosuzu_file_eof(file)) return true;
+	if((size + file->file_offset) > file->file_size) {
+		read_size = file->file_size - file->file_offset;
+	}
+
+	/* read data ----------------------------------------*/
+	fread(output,sizeof(char),read_size,archive->file_ptr);
+	file->file_offset += read_size;
 	return true;
+}
+
+/* misc functions -----------------------------------------------------------*/
+int kosuzu_file_eof(KOSUZU_FILE *file) {
+	if(!file_checkOK(file)) return false;
+	if(!file->is_open) return false;
+
+	if(file->file_offset >= file->file_size) return true;
+	return false;
 }
 

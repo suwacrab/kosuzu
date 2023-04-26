@@ -16,7 +16,7 @@ if(kosuzu_archiveOpenFile(&archive,"character.ksz")) {
 	if(src_file) {
 		FILE *out_file = fopen("output.bmp","wb");
 		char file_buffer;
-		for(size_t i=0; i<src_file->file_size; i++) {
+		while(!kosuzu_file_eof(src_file)) {
 			kosuzu_file_read(src_file,&file_buffer,sizeof(char));
 			fwrite(&file_buffer,1,sizeof(char),out_file);
 		}

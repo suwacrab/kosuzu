@@ -152,6 +152,7 @@ KOSUZU_FILE *kosuzu_archiveFileOpen(KOSUZU_ARCHIVE *archive,const char *name);
 int kosuzu_file_close(KOSUZU_FILE *file);
 int kosuzu_file_seek(KOSUZU_FILE *file,long int offset,int whence);
 int kosuzu_file_read(KOSUZU_FILE *file,void *output,size_t size);
+int kosuzu_file_eof(KOSUZU_FILE *file);
 
 uint32_t kosuzu_hashString(const char *str);
 

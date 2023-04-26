@@ -78,7 +78,7 @@ static void read() {
 			}
 
 			char dat_buf;
-			for(size_t i=0; i<img_file->file_size; i++) {
+			while(!kosuzu_file_eof(img_file)) {
 				kosuzu_file_read(img_file,&dat_buf,sizeof(char));
 				fwrite(&dat_buf,sizeof(char),1,out_file);
 			}
