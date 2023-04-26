@@ -28,10 +28,11 @@ static void write() {
 				*	udata	: stand
 				*	udata	: walk
 	*/
-	KOSUZU_SAVEENTRY entries[32] = {};
+	const size_t ENTRY_MAX = 64;
+	KOSUZU_SAVEENTRY entries[ENTRY_MAX];
 	KOSUZU_SAVEQUEUE queue = {};
 
-	kosuzu_savequeue_setup(&queue,entries,32);
+	kosuzu_savequeue_setup(&queue,entries,ENTRY_MAX);
 	kosuzu_savequeue_addFolder(&queue,"\\","text");
 	kosuzu_savequeue_addFolder(&queue,"\\","cg");
 	kosuzu_savequeue_addFolder(&queue,"\\cg\\","marina");
