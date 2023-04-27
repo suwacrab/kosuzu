@@ -17,6 +17,15 @@ int kosuzu_savequeue_addEntry(KOSUZU_SAVEQUEUE *queue,const KOSUZU_SAVEENTRY *en
 	if(queue->entry_count >= queue->entry_max) return false;
 	queue->entry_ptr[queue->entry_count++] = *entry;
 }
+int kosuzu_savequeue_addUdata(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name,const void *data,size_t data_size) {
+	KOSUZU_SAVEENTRY entry = {
+		.name = name,		.arc_path = arc_path,
+		.is_file = false,	.out_type = KOSUZU_NODETYPE_USERDATA,
+		.i.udata_ptr = data,
+		.i.udata_size = data_size
+	};
+	return kosuzu_savequeue_addEntry(queue,&entry);
+}
 int kosuzu_savequeue_addFile(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name,const char *filename) {
 	KOSUZU_SAVEENTRY entry = {
 		.name = name,		.arc_path = arc_path,

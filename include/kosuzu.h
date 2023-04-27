@@ -130,6 +130,7 @@ typedef struct KOSUZU_ARCHIVE {
 int kosuzu_savequeue_setup(KOSUZU_SAVEQUEUE *queue,KOSUZU_SAVEENTRY entries[],const size_t entry_max);
 int kosuzu_savequeue_addEntry(KOSUZU_SAVEQUEUE *queue,const KOSUZU_SAVEENTRY *entry);
 int kosuzu_savequeue_addFolder(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name);
+int kosuzu_savequeue_addUdata(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name,const void *data,size_t data_size);
 int kosuzu_savequeue_addFile(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name,const char *filename);
 int kosuzu_savequeue_addSint(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name,const int32_t num);
 int kosuzu_savequeue_addUint(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name,const uint32_t num);
@@ -170,6 +171,33 @@ class CKosuzuArchive : public KOSUZU_ARCHIVE {
 		return kosuzu_archiveOpenFile(this,filename);
 	}
 	int close() { return kosuzu_archiveClose(this); }
+};
+
+class CKosuzuSaveQueue : public KOSUZU_SAVEQUEUE {
+	public:
+		int setup(KOSUZU_SAVEENTRY entries[],size_t max) {
+			return kosuzu_savequeue_setup(this,entries,max);
+		}
+		int add_folder(const char *arc_path,const char *name) {
+			return kosuzu_savequeue_addFolder(this,arc_path,name);
+		}
+		int add_file(const char *arc_path,const char *name,const char *filename) {
+			return kosuzu_savequeue_addFile(this,arc_path,name,filename);
+		}
+		int add_udata(const char *arc_path,const char *name,const void *data,size_t data_size) {
+			return kosuzu_savequeue_addUdata(this,arc_path,name,data,data_size);
+		}
+		int add_sint(const char *arc_path,const char *name,int32_t value) {
+			return kosuzu_savequeue_addSint(this,arc_path,name,value);
+		}
+		int add_uint(const char *arc_path,const char *name,uint32_t value) {
+			return kosuzu_savequeue_addUint(this,arc_path,name,value);
+		}
+		int save_file(const char *filename) {
+			return kosuzu_savequeue_saveFile(this,filename);
+		}
+	private:
+
 };
 
 #endif

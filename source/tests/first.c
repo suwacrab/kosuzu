@@ -20,7 +20,7 @@ static void write() {
 		-	int		: width		0x0A55DEAD
 		-	int		: height	0x0DEADA55
 		+	folder	: text
-			*	udata	: build
+			*	udata	: message
 		+	folder	: cg
 			+	kosuzu
 				*	udata	: cucumber
@@ -45,7 +45,7 @@ static void write() {
 	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","walk","workdata\\mrn_walk.gif");
 	kosuzu_savequeue_addFile(&queue,"\\cg\\kosuzu\\","cucumber","workdata\\cucumber.bmp");
 	kosuzu_savequeue_addFile(&queue,"\\cg\\kosuzu\\","cucumber_orig","workdata\\cucumber_orig.png");
-	kosuzu_savequeue_addFile(&queue,"\\text\\","build","build.lua");
+	kosuzu_savequeue_addUdata(&queue,"\\text\\","message","hello",6);
 	kosuzu_savequeue_addUint(&queue,"\\","width",0x0A55DEAD);
 	kosuzu_savequeue_addUint(&queue,"\\","height",0xDEADA55);
 
@@ -99,6 +99,21 @@ static void read() {
 		printf("number: %08Xh\n",num_node->d.value_uint);
 	} else {
 		puts("test 'first' failed: number node not found");
+		exit(-1);
+	}
+
+	/* read a string ------------------------------------*/
+	kosuzu_archiveChdir(&archive,NULL);
+	kosuzu_archiveChdir(&archive,"text");
+	KOSUZU_FILE *text_file = kosuzu_archiveFileOpen(&archive,"message");
+	if(text_file) {
+		char str_buf[128] = {};
+		kosuzu_file_read(text_file,str_buf,text_file->file_size);
+		kosuzu_file_close(text_file);
+
+		printf("message: '%s'\n",str_buf);
+	} else {
+		puts("test 'first' failed: message node not found");
 		exit(-1);
 	}
 
