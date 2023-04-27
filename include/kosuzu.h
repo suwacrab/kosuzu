@@ -1,5 +1,5 @@
-#ifndef KOSUSU_H
-#define KOSUSU_H
+#ifndef KOSUZU_H
+#define KOSUZU_H
 
 #ifdef __cplusplus
 extern "C" {
