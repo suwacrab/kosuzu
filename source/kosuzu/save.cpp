@@ -210,7 +210,7 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 		}
 	};
 	auto fbuffer_seekPos = [&](size_t dst_offset) {
-		char tempdata[4] = { 'd','u','m','.' };
+		uint8_t tempdata[4] = { 0xAB,0xAB,0xAB,0xAB };
 		while(file_buffer.size() != dst_offset) {
 			const size_t index = file_buffer.size() & 3;
 			fbuffer_writeData(&tempdata[index],sizeof(char));
