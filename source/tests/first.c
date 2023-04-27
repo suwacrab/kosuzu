@@ -52,16 +52,16 @@ static void write() {
 	puts("test 'first': .ksz saved.");
 }
 static void read() {
-	KOSUZU_ARCHIVE archive;
-	if(!kosuzu_archiveOpenFile(&archive,"data\\testF.ksz")) {
+	KOSUZU_RECORD archive;
+	if(!kosuzu_recordOpenFile(&archive,"data\\testF.ksz")) {
 		puts("test 'first' failed: couldn't open archive");
 		exit(-1);
 		return;
 	}
 
 	/* read da gifs -------------------------------------*/
-	kosuzu_archiveChdir(&archive,NULL);
-	kosuzu_archiveChdir(&archive,"cg\\marina");
+	kosuzu_recordChdir(&archive,NULL);
+	kosuzu_recordChdir(&archive,"cg\\marina");
 
 	const char *filenames[2][3] = {
 		{ "idle","stand","walk" },
@@ -75,7 +75,7 @@ static void read() {
 	for(int f=0; f<3; f++) {
 		const char *src_name = filenames[0][f];
 		const char *out_filename = filenames[1][f];
-		KOSUZU_FILE *img_file = kosuzu_archiveFileOpen(&archive,src_name);
+		KOSUZU_FILE *img_file = kosuzu_recordFileOpen(&archive,src_name);
 		if(img_file) {
 			FILE *out_file = fopen(out_filename,"wb");
 			if(!out_file) {
@@ -93,8 +93,8 @@ static void read() {
 	}
 	
 	/* read a number ------------------------------------*/
-	kosuzu_archiveChdir(&archive,NULL);
-	const KOSUZU_NODE *num_node = kosuzu_archiveNodeFind(&archive,"height");
+	kosuzu_recordChdir(&archive,NULL);
+	const KOSUZU_NODE *num_node = kosuzu_recordNodeFind(&archive,"height");
 	if(num_node) {
 		printf("number: %08Xh\n",num_node->d.value_uint);
 	} else {
@@ -103,9 +103,9 @@ static void read() {
 	}
 
 	/* read a string ------------------------------------*/
-	kosuzu_archiveChdir(&archive,NULL);
-	kosuzu_archiveChdir(&archive,"text");
-	KOSUZU_FILE *text_file = kosuzu_archiveFileOpen(&archive,"message");
+	kosuzu_recordChdir(&archive,NULL);
+	kosuzu_recordChdir(&archive,"text");
+	KOSUZU_FILE *text_file = kosuzu_recordFileOpen(&archive,"message");
 	if(text_file) {
 		char str_buf[128] = {};
 		kosuzu_file_read(text_file,str_buf,text_file->file_size);
@@ -118,6 +118,6 @@ static void read() {
 	}
 
 	/* close archive ------------------------------------*/
-	kosuzu_archiveClose(&archive);
+	kosuzu_recordClose(&archive);
 }
 

@@ -104,14 +104,14 @@ typedef struct KOSUZU_NODE {
 	} d;	
 } KOSUZU_NODE;
 typedef struct KOSUZU_FILE {
-	struct KOSUZU_ARCHIVE *archive_ptr;
+	struct KOSUZU_RECORD *archive_ptr;
 	const KOSUZU_NODE *file_node;
 	size_t file_offset;
 	size_t file_size;
 
 	int is_open;
 } KOSUZU_FILE;
-typedef struct KOSUZU_ARCHIVE {
+typedef struct KOSUZU_RECORD {
 	size_t node_count;
 	size_t tree_count;
 	size_t data_offset;
@@ -124,7 +124,7 @@ typedef struct KOSUZU_ARCHIVE {
 	int did_openFile;
 
 	KOSUZU_FILE file_list[KOSUZU_FILE_MAXOPEN];
-} KOSUZU_ARCHIVE;
+} KOSUZU_RECORD;
 
 /* functions ----------------------------------------------------------------*/
 int kosuzu_savequeue_setup(KOSUZU_SAVEQUEUE *queue,KOSUZU_SAVEENTRY entries[],const size_t entry_max);
@@ -140,15 +140,15 @@ int kosuzu_save(void **out_buffer, const KOSUZU_SAVEENTRY entries[],const size_t
 int kosuzu_saveFile(const char *out_filename,const KOSUZU_SAVEENTRY entries[],const size_t entry_count);
 int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info);
 
-int kosuzu_archiveOpen(KOSUZU_ARCHIVE *archive,FILE *file_ptr);
-int kosuzu_archiveOpenFile(KOSUZU_ARCHIVE *archive,const char *src_filename);
-int kosuzu_archiveClose(KOSUZU_ARCHIVE *archive);
+int kosuzu_recordOpen(KOSUZU_RECORD *archive,FILE *file_ptr);
+int kosuzu_recordOpenFile(KOSUZU_RECORD *archive,const char *src_filename);
+int kosuzu_recordClose(KOSUZU_RECORD *archive);
 
-int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name);
-const KOSUZU_NODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name);
-const KOSUZU_NODE *kosuzu_archiveNodeGet(KOSUZU_ARCHIVE *archive,size_t index);
-const KOSUZU_NODE *kosuzu_archiveNodeGetCurFldr(KOSUZU_ARCHIVE *archive);
-KOSUZU_FILE *kosuzu_archiveFileOpen(KOSUZU_ARCHIVE *archive,const char *name);
+int kosuzu_recordChdir(KOSUZU_RECORD *archive,const char *dir_name);
+const KOSUZU_NODE *kosuzu_recordNodeFind(KOSUZU_RECORD *archive,const char *name);
+const KOSUZU_NODE *kosuzu_recordNodeGet(KOSUZU_RECORD *archive,size_t index);
+const KOSUZU_NODE *kosuzu_recordNodeGetCurFldr(KOSUZU_RECORD *archive);
+KOSUZU_FILE *kosuzu_recordFileOpen(KOSUZU_RECORD *archive,const char *name);
 
 int kosuzu_file_close(KOSUZU_FILE *file);
 int kosuzu_file_seek(KOSUZU_FILE *file,long int offset,int whence);
@@ -163,14 +163,14 @@ uint32_t kosuzu_hashString(const char *str);
 
 /* C++ portion --------------------------------------------------------------*/
 #ifdef __cplusplus
-class CKosuzuArchive : public KOSUZU_ARCHIVE {
+class CKosuzuRecord : public KOSUZU_RECORD {
 	int open(FILE *fptr) {
-		return kosuzu_archiveOpen(this,fptr);
+		return kosuzu_recordOpen(this,fptr);
 	}	
 	int openFile(const char *filename) { 
-		return kosuzu_archiveOpenFile(this,filename);
+		return kosuzu_recordOpenFile(this,filename);
 	}
-	int close() { return kosuzu_archiveClose(this); }
+	int close() { return kosuzu_recordClose(this); }
 };
 
 class CKosuzuSaveQueue : public KOSUZU_SAVEQUEUE {

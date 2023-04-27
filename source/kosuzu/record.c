@@ -6,7 +6,7 @@
 #include "kosuzu.h"
 
 /* main functions -----------------------------------------------------------*/
-int kosuzu_archiveOpen(KOSUZU_ARCHIVE *archive,FILE *file_ptr) {
+int kosuzu_recordOpen(KOSUZU_RECORD *archive,FILE *file_ptr) {
 	if(!archive) return false;
 	if(!file_ptr) return false;
 
@@ -58,16 +58,16 @@ int kosuzu_archiveOpen(KOSUZU_ARCHIVE *archive,FILE *file_ptr) {
 
 	return true;
 }
-int kosuzu_archiveOpenFile(KOSUZU_ARCHIVE *archive,const char *src_filename) {
+int kosuzu_recordOpenFile(KOSUZU_RECORD *archive,const char *src_filename) {
 	if(!archive) return false;
 	FILE *file_ptr = fopen(src_filename,"rb");
 	if(!file_ptr) return false;
 
-	kosuzu_archiveOpen(archive,file_ptr);
+	kosuzu_recordOpen(archive,file_ptr);
 	archive->did_openFile = true;
 	return true;
 }
-int kosuzu_archiveClose(KOSUZU_ARCHIVE *archive) {
+int kosuzu_recordClose(KOSUZU_RECORD *archive) {
 	if(!archive) return false;
 
 	free(archive->data_nodes);
@@ -81,21 +81,21 @@ int kosuzu_archiveClose(KOSUZU_ARCHIVE *archive) {
 }
 
 /* node functions -----------------------------------------------------------*/
-const KOSUZU_NODE *kosuzu_archiveNodeGetCurFldr(KOSUZU_ARCHIVE *archive) {
+const KOSUZU_NODE *kosuzu_recordNodeGetCurFldr(KOSUZU_RECORD *archive) {
 	if(!archive) return NULL;
 	return &archive->data_nodes[archive->fldr_current];
 }
-const KOSUZU_NODE *kosuzu_archiveNodeGet(KOSUZU_ARCHIVE *archive,size_t index) {
+const KOSUZU_NODE *kosuzu_recordNodeGet(KOSUZU_RECORD *archive,size_t index) {
 	if(!archive) return NULL;
 	if(index >= archive->node_count) return NULL;
 	if(index < 0) return NULL;
 	return &archive->data_nodes[index];
 }
-const KOSUZU_NODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *name) {
+const KOSUZU_NODE *kosuzu_recordNodeFind(KOSUZU_RECORD *archive,const char *name) {
 	if(!archive) return NULL;
 
 	const uint32_t name_hash = kosuzu_hashString(name);
-	const KOSUZU_NODE *cur_fldr = kosuzu_archiveNodeGetCurFldr(archive);
+	const KOSUZU_NODE *cur_fldr = kosuzu_recordNodeGetCurFldr(archive);
 
 	/* loop through tree --------------------------------*/
 	const size_t fldr_size = cur_fldr->d.folder_size;
@@ -103,7 +103,7 @@ const KOSUZU_NODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *na
 		const size_t node_index = archive->data_trees[
 			cur_fldr->d.folder_treeindex + i
 		];
-		const KOSUZU_NODE *node = kosuzu_archiveNodeGet(archive,node_index);
+		const KOSUZU_NODE *node = kosuzu_recordNodeGet(archive,node_index);
 		if(node->name_hash == name_hash) {
 			return node;
 		}
@@ -113,7 +113,7 @@ const KOSUZU_NODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *na
 }
 
 /* folder functions ---------------------------------------------------------*/
-int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name) {
+int kosuzu_recordChdir(KOSUZU_RECORD *archive,const char *dir_name) {
 	if(!archive) return false;
 
 	/* if dir_name is null, reset cwd to root. ----------*/
@@ -133,7 +133,7 @@ int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name) {
 		char cur_chara = dir_name[inp_index++];
 		if(cur_chara == '\\' || cur_chara == '\0') {
 			name_buffer[out_index++] = '\0';
-			const KOSUZU_NODE *node = kosuzu_archiveNodeFind(archive,name_buffer);
+			const KOSUZU_NODE *node = kosuzu_recordNodeFind(archive,name_buffer);
 			if(node && node->node_type == KOSUZU_NODETYPE_FOLDER) {
 				archive->fldr_current = node->node_index;
 			} else {
@@ -150,7 +150,7 @@ int kosuzu_archiveChdir(KOSUZU_ARCHIVE *archive,const char *dir_name) {
 	archive->fldr_current = orig_folder;
 	return false;
 }
-KOSUZU_FILE *kosuzu_archiveFileOpen(KOSUZU_ARCHIVE *archive,const char *name) {
+KOSUZU_FILE *kosuzu_recordFileOpen(KOSUZU_RECORD *archive,const char *name) {
 	if(!archive) return NULL;
 
 	/* search for available file handle -----------------*/
@@ -165,7 +165,7 @@ KOSUZU_FILE *kosuzu_archiveFileOpen(KOSUZU_ARCHIVE *archive,const char *name) {
 	if(!file) return NULL;
 
 	/* search for node ----------------------------------*/
-	const KOSUZU_NODE *node = kosuzu_archiveNodeFind(archive,name);
+	const KOSUZU_NODE *node = kosuzu_recordNodeFind(archive,name);
 	if(node) {
 		switch(node->node_type) {
 			case KOSUZU_NODETYPE_USERDATA: {

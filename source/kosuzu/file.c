@@ -20,7 +20,7 @@ size_t kosuzu_file_read(KOSUZU_FILE *file,void *output,size_t size) {
 	if(!file_checkOK(file)) return 0;
 	if(!file->is_open) return 0;
 
-	const KOSUZU_ARCHIVE *archive = file->archive_ptr;
+	const KOSUZU_RECORD *archive = file->archive_ptr;
 	size_t read_size = size;
 
 	/* make sure to not read past file ------------------*/
