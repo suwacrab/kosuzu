@@ -15,6 +15,13 @@ int kosuzu_archiveOpen(KOSUZU_ARCHIVE *archive,FILE *file_ptr) {
 	rewind(file_ptr);
 	fread(&file_header,sizeof(KOSUZU_FILEHEADER),1,file_ptr);
 
+	const char *magic = "kosuzu!";
+	for(int i=0; i<8; i++) {
+		if(file_header.magic[i] != magic[i]) {
+			return false;
+		}
+	}
+
 	archive->node_count = file_header.node_count;
 	archive->tree_count = file_header.tree_count;
 	archive->fldr_current = 0;

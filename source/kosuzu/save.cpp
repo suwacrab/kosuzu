@@ -210,9 +210,10 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 		}
 	};
 	auto fbuffer_seekPos = [&](size_t dst_offset) {
-		char tempdata = 0xAB;
+		char tempdata[4] = { 'd','u','m','.' };
 		while(file_buffer.size() != dst_offset) {
-			fbuffer_writeData(&tempdata,sizeof(char));
+			const size_t index = file_buffer.size() & 3;
+			fbuffer_writeData(&tempdata[index],sizeof(char));
 		}
 	};
 
