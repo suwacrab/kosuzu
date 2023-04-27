@@ -90,7 +90,7 @@ const KOSUZU_NODE *kosuzu_archiveNodeFind(KOSUZU_ARCHIVE *archive,const char *na
 	const uint32_t name_hash = kosuzu_hashString(name);
 	const KOSUZU_NODE *cur_fldr = kosuzu_archiveNodeGetCurFldr(archive);
 
-	// loop through tree
+	/* loop through tree --------------------------------*/
 	const size_t fldr_size = cur_fldr->d.folder_size;
 	for(int i=0; i<fldr_size; i++) {
 		const size_t node_index = archive->data_trees[
