@@ -8,6 +8,10 @@
 
 #include "kosuzu.h"
 
+#define OFFSET_ALIGNMENT (0x100)
+
+static uint32_t align_offset(size_t offset);
+
 /* types --------------------------------------------------------------------*/
 typedef struct FOLDER_INFO {
 	size_t id;		// id in folder list
@@ -19,6 +23,11 @@ typedef struct FOLDER_INFO {
 typedef struct FOLDER_BLOCKS {
 	const KOSUZU_SAVEENTRY *entries[256];
 } FOLDER_BLOCKS;
+
+/* misc functions -----------------------------------------------------------*/
+static uint32_t align_offset(size_t offset) {
+	return OFFSET_ALIGNMENT * (((OFFSET_ALIGNMENT-1) + offset) / OFFSET_ALIGNMENT);
+}
 
 /* functions ----------------------------------------------------------------*/
 int kosuzu_save(void **out_buffer, const KOSUZU_SAVEENTRY entries[],const size_t entry_count) {
@@ -38,6 +47,8 @@ int kosuzu_saveFile(const char *out_filename,const KOSUZU_SAVEENTRY entries[],co
 		.entry_count = entry_count,
 		.out_filename = out_filename
 	};
+
+	//info.flag_verbose = true;
 
 	return kosuzu_saveEX(&info);
 }
@@ -143,11 +154,12 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 	}
 	
 	/* calculate size of all file sections ----------------------------------*/
-	size_t file_headsection_size = sizeof(KOSUZU_FILEHEADER);
-	size_t file_nodesection_size = sizeof(KOSUZU_FILENODE) * (entry_count+1);
+	size_t file_headsection_size = align_offset(sizeof(KOSUZU_FILEHEADER));
+	size_t file_nodesection_size = align_offset(sizeof(KOSUZU_FILENODE) * (entry_count+1));
 	size_t file_treesection_size = 0;
 	size_t file_datasection_size = 0;
 	size_t file_allsize = 0;
+	size_t tree_count = 0;
 
 	for(int i=0; i<entry_count; i++) {
 		const auto &entry = entries[i];
@@ -166,7 +178,7 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 					file_size = std::ftell(file);
 					std::fclose(file);
 				}
-				file_datasection_size += file_size;
+				file_datasection_size += align_offset(file_size);
 				break;
 			}
 			case KOSUZU_NODETYPE_FOLDER: { break; }
@@ -176,8 +188,10 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 
 	for(int f=0; f<folder_infolist.size(); f++) {
 		const auto folder = folder_infolist.at(f);
-		file_treesection_size += sizeof(uint16_t) * folder.block_count;
+		tree_count += folder.block_count;
 	};
+
+	file_treesection_size = align_offset(sizeof(uint16_t) * tree_count);
 	
 	file_allsize = 
 		file_headsection_size +
@@ -195,13 +209,19 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 			file_buffer.push_back(((uint8_t*)src_data)[i]);
 		}
 	};
+	auto fbuffer_seekPos = [&](size_t dst_offset) {
+		char tempdata = 0xAB;
+		while(file_buffer.size() != dst_offset) {
+			fbuffer_writeData(&tempdata,sizeof(char));
+		}
+	};
 
 	// write header
 	{
 		const char *magic_string = "kosuzu!";
 		file_header = {
 			.node_count = entry_count + 1,
-			.tree_count = file_treesection_size / sizeof(uint16_t),
+			.tree_count = tree_count,
 			.data_size = file_datasection_size,
 			.offset_nodes = file_headsection_size,
 			.offset_trees = file_headsection_size + file_nodesection_size,
@@ -265,7 +285,7 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 					}
 					node.d.udata_size = file_size;
 					node.d.udata_offset = file_dataoffset;
-					file_dataoffset += file_size;
+					file_dataoffset += align_offset(file_size);
 					break;
 				}
 				case KOSUZU_NODETYPE_FOLDER: {
@@ -289,9 +309,12 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 
 			list_filenodes.push_back(node);
 		}
+		fbuffer_seekPos(file_header.offset_nodes);
 		fbuffer_writeData(list_filenodes.data(),list_filenodes.size() * sizeof(KOSUZU_FILENODE));
 		
 		// writing trees to the file
+		fbuffer_seekPos(file_header.offset_trees);
+		
 		for(int f=0; f<folder_infolist.size(); f++) {
 			const auto folder = folder_infolist.at(f);
 			const auto blocklist = folder_blocklist.at(f);
@@ -315,6 +338,7 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 	
 	// write data
 	{
+		fbuffer_seekPos(file_header.offset_data);
 		for(int e=0; e<entry_count; e++) {
 			const auto &entry = entries[e];
 			if(entry.out_type == KOSUZU_NODETYPE_USERDATA) {
@@ -330,13 +354,22 @@ int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info) {
 					file_size = std::ftell(file);
 					std::rewind(file);
 
+					size_t size_real = (file_size);
+					size_t dst_pos = align_offset(file_buffer.size() + size_real);
+
 					for(size_t i=0; i<file_size; i++) {
 						std::fread(&chr_buf,sizeof(char),1,file);
 						fbuffer_writeData(&chr_buf,sizeof(char));
 					}
 					std::fclose(file);
+					
+					fbuffer_seekPos(dst_pos);
 				} else {
+					size_t size_real = (entry.i.udata_size);
+					size_t dst_pos = align_offset(file_buffer.size() + size_real);
+					
 					fbuffer_writeData(entry.i.udata_ptr,entry.i.udata_size);
+					fbuffer_seekPos(dst_pos);
 				}
 			}
 		}

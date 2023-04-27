@@ -73,3 +73,8 @@ equivalent'll be needed considering how easy it is to do it in C.
 maybe it's about time to finally put the library to use, all the essentials
 are done now.
 
+BUT, one slightly-notable change has to be made, now: all entries' data is now
+aligned.
+would've probably been easier if i designed the library with that in mind from
+the beginning...
+
