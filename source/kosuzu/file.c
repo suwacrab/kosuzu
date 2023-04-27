@@ -16,15 +16,15 @@ int kosuzu_file_close(KOSUZU_FILE *file) {
 	if(!file->is_open) return false;
 	return true;
 }*/
-int kosuzu_file_read(KOSUZU_FILE *file,void *output,size_t size) {
-	if(!file_checkOK(file)) return false;
-	if(!file->is_open) return false;
+size_t kosuzu_file_read(KOSUZU_FILE *file,void *output,size_t size) {
+	if(!file_checkOK(file)) return 0;
+	if(!file->is_open) return 0;
 
 	const KOSUZU_ARCHIVE *archive = file->archive_ptr;
 	size_t read_size = size;
 
 	/* make sure to not read past file ------------------*/
-	if(kosuzu_file_eof(file)) return true;
+	if(kosuzu_file_eof(file)) return 0;
 	if((size + file->file_offset) > file->file_size) {
 		read_size = file->file_size - file->file_offset;
 	}
@@ -32,7 +32,7 @@ int kosuzu_file_read(KOSUZU_FILE *file,void *output,size_t size) {
 	/* read data ----------------------------------------*/
 	fread(output,sizeof(char),read_size,archive->file_ptr);
 	file->file_offset += read_size;
-	return true;
+	return read_size;
 }
 
 int kosuzu_file_eof(KOSUZU_FILE *file) {

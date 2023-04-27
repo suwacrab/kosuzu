@@ -23,6 +23,8 @@ static void write() {
 			*	udata	: build
 		+	folder	: cg
 			+	kosuzu
+				*	udata	: cucumber
+				*	udata	: cucumber_orig
 			+	marina
 				*	udata	: idle
 				*	udata	: stand
@@ -40,6 +42,9 @@ static void write() {
 	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","idle","workdata\\mrn_idle.gif");
 	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","stand","workdata\\mrn_stand.gif");
 	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","walk","workdata\\mrn_walk.gif");
+	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","walk","workdata\\mrn_walk.gif");
+	kosuzu_savequeue_addFile(&queue,"\\cg\\kosuzu\\","cucumber","workdata\\cucumber.bmp");
+	kosuzu_savequeue_addFile(&queue,"\\cg\\kosuzu\\","cucumber_orig","workdata\\cucumber_orig.png");
 	kosuzu_savequeue_addFile(&queue,"\\text\\","build","build.lua");
 	kosuzu_savequeue_addUint(&queue,"\\","width",0x0A55DEAD);
 	kosuzu_savequeue_addUint(&queue,"\\","height",0xDEADA55);
@@ -79,8 +84,7 @@ static void read() {
 			}
 
 			char dat_buf;
-			for(size_t i=0; i<img_file->file_size; i++) {
-				kosuzu_file_read(img_file,&dat_buf,sizeof(char));
+			while(kosuzu_file_read(img_file,&dat_buf,sizeof(char)) == 1) {
 				fwrite(&dat_buf,sizeof(char),1,out_file);
 			}
 			fclose(out_file);
