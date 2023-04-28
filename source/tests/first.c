@@ -42,14 +42,14 @@ static void write() {
 	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","idle","workdata\\mrn_idle.gif");
 	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","stand","workdata\\mrn_stand.gif");
 	kosuzu_savequeue_addFile(&queue,"\\cg\\marina\\","walk","workdata\\mrn_walk.gif");
-//	kosuzu_savequeue_addFile(&queue,"\\cg\\kosuzu\\","cucumber","workdata\\cucumber.bmp");
-//	kosuzu_savequeue_addFile(&queue,"\\cg\\kosuzu\\","cucumber_orig","workdata\\cucumber_orig.png");
+	kosuzu_savequeue_addFile(&queue,"\\cg\\kosuzu\\","cucumber","workdata\\cucumber.bmp");
+	kosuzu_savequeue_addFile(&queue,"\\cg\\kosuzu\\","cucumber_orig","workdata\\cucumber_orig.png");
 	kosuzu_savequeue_addUdata(&queue,"\\text\\","message","hello",6);
 	kosuzu_savequeue_addUint(&queue,"\\","width",0x0A55DEAD);
 	kosuzu_savequeue_addUint(&queue,"\\","height",0xDEADA55);
 
 	kosuzu_savequeue_saveFile(&queue,"data\\testF.ksz");
-	puts("test 'first': .ksz saved.");
+	puts("[test 'first']: .ksz saved.");
 }
 static void read() {
 	KOSUZU_RECORD archive;
@@ -72,14 +72,30 @@ static void read() {
 		}
 	};
 
+	{	// check if entries exist
+		KOSUZU_NODECHECK_ENTRY check_list[] = {
+			{"idle",	KOSUZU_NODETYPE_USERDATA},
+			{"stand",	KOSUZU_NODETYPE_USERDATA},
+			{"walk",	KOSUZU_NODETYPE_USERDATA},
+			{NULL,0}
+		};
+		int check_result = kosuzu_record_nodeCheck(&archive,check_list);
+		if(check_result >= 0) {
+			printf("[test 'first']: failed: node '%s' missing/incorrect\n",
+				check_list[check_result].name
+			);
+			exit(-1);
+		}
+	}
+
 	for(int f=0; f<3; f++) {
 		const char *src_name = filenames[0][f];
 		const char *out_filename = filenames[1][f];
-		KOSUZU_FILE *img_file = kosuzu_recordFileOpen(&archive,src_name);
+		KOSUZU_FILE *img_file = kosuzu_record_fileOpen(&archive,src_name);
 		if(img_file) {
 			FILE *out_file = fopen(out_filename,"wb");
 			if(!out_file) {
-				puts("test 'first' failed: couldn't open output file");
+				puts("[test 'first']: failed: couldn't open output file");
 				exit(-1);
 			}
 
@@ -105,7 +121,7 @@ static void read() {
 	/* read a string ------------------------------------*/
 	kosuzu_recordChdir(&archive,NULL);
 	kosuzu_recordChdir(&archive,"text");
-	KOSUZU_FILE *text_file = kosuzu_recordFileOpen(&archive,"message");
+	KOSUZU_FILE *text_file = kosuzu_record_fileOpen(&archive,"message");
 	if(text_file) {
 		char str_buf[128] = {};
 		kosuzu_file_read(text_file,str_buf,text_file->file_size);

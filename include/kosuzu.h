@@ -125,6 +125,10 @@ typedef struct KOSUZU_RECORD {
 
 	KOSUZU_FILE file_list[KOSUZU_FILE_MAXOPEN];
 } KOSUZU_RECORD;
+typedef struct KOSUZU_NODECHECK_ENTRY {
+	const char *name;
+	size_t type;
+} KOSUZU_NODECHECK_ENTRY;
 
 /* functions ----------------------------------------------------------------*/
 int kosuzu_savequeue_setup(KOSUZU_SAVEQUEUE *queue,KOSUZU_SAVEENTRY entries[],const size_t entry_max);
@@ -148,7 +152,8 @@ int kosuzu_recordChdir(KOSUZU_RECORD *archive,const char *dir_name);
 const KOSUZU_NODE *kosuzu_recordNodeFind(KOSUZU_RECORD *archive,const char *name);
 const KOSUZU_NODE *kosuzu_recordNodeGet(KOSUZU_RECORD *archive,size_t index);
 const KOSUZU_NODE *kosuzu_recordNodeGetCurFldr(KOSUZU_RECORD *archive);
-KOSUZU_FILE *kosuzu_recordFileOpen(KOSUZU_RECORD *archive,const char *name);
+KOSUZU_FILE *kosuzu_record_fileOpen(KOSUZU_RECORD *archive,const char *name);
+int kosuzu_record_nodeCheck(KOSUZU_RECORD *record,KOSUZU_NODECHECK_ENTRY name_list[]);
 
 int kosuzu_file_close(KOSUZU_FILE *file);
 int kosuzu_file_seek(KOSUZU_FILE *file,long int offset,int whence);
@@ -163,16 +168,25 @@ uint32_t kosuzu_hashString(const char *str);
 
 /* C++ portion --------------------------------------------------------------*/
 #ifdef __cplusplus
-class CKosuzuRecord : public KOSUZU_RECORD {
-	int open(FILE *fptr) {
-		return kosuzu_recordOpen(this,fptr);
-	}	
-	int openFile(const char *filename) { 
-		return kosuzu_recordOpenFile(this,filename);
-	}
-	int close() { return kosuzu_recordClose(this); }
-};
+class CKosuzuRecord: public KOSUZU_RECORD {
+	public:
+		int close() {
+			return kosuzu_recordClose(this); 
+		}
+		int open_file(const char *filename) {
+			return kosuzu_recordOpenFile(this,filename);
+		}
 
+		int chdir(const char *dir_name) { 
+			return kosuzu_recordChdir(this,dir_name);
+		}
+		const KOSUZU_NODE *node_find(const char *name) {
+			return kosuzu_recordNodeFind(this,name);
+		}
+		KOSUZU_FILE *file_open(const char *name) { 
+			return kosuzu_record_fileOpen(this,name); 
+		}
+};
 class CKosuzuSaveQueue : public KOSUZU_SAVEQUEUE {
 	public:
 		int setup(KOSUZU_SAVEENTRY entries[],size_t max) {

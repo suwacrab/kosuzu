@@ -111,6 +111,24 @@ const KOSUZU_NODE *kosuzu_recordNodeFind(KOSUZU_RECORD *archive,const char *name
 
 	return NULL;
 }
+int kosuzu_record_nodeCheck(KOSUZU_RECORD *record,KOSUZU_NODECHECK_ENTRY node_list[]) {
+	if(!record) return 0;
+	if(!node_list) return 0;
+	
+	size_t index = 0;
+	while(node_list[index].name) {
+		const char *name = node_list[index].name;
+		const size_t type = node_list[index].type;
+		
+		/* search for node ------------------------------*/
+		const KOSUZU_NODE *node = kosuzu_recordNodeFind(record,name);
+		if(!node) return index;
+		if(node->node_type != type) return index;
+
+		index++;
+	}
+	return -1;
+}
 
 /* folder functions ---------------------------------------------------------*/
 int kosuzu_recordChdir(KOSUZU_RECORD *archive,const char *dir_name) {
@@ -150,7 +168,7 @@ int kosuzu_recordChdir(KOSUZU_RECORD *archive,const char *dir_name) {
 	archive->fldr_current = orig_folder;
 	return false;
 }
-KOSUZU_FILE *kosuzu_recordFileOpen(KOSUZU_RECORD *archive,const char *name) {
+KOSUZU_FILE *kosuzu_record_fileOpen(KOSUZU_RECORD *archive,const char *name) {
 	if(!archive) return NULL;
 
 	/* search for available file handle -----------------*/
