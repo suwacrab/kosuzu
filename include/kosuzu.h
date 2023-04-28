@@ -131,6 +131,8 @@ typedef struct KOSUZU_NODECHECK_ENTRY {
 } KOSUZU_NODECHECK_ENTRY;
 
 /* functions ----------------------------------------------------------------*/
+
+// savqueue.c
 int kosuzu_savequeue_setup(KOSUZU_SAVEQUEUE *queue,KOSUZU_SAVEENTRY entries[],const size_t entry_max);
 int kosuzu_savequeue_addEntry(KOSUZU_SAVEQUEUE *queue,const KOSUZU_SAVEENTRY *entry);
 int kosuzu_savequeue_addFolder(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name);
@@ -140,10 +142,12 @@ int kosuzu_savequeue_addSint(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const 
 int kosuzu_savequeue_addUint(KOSUZU_SAVEQUEUE *queue,const char *arc_path,const char *name,const uint32_t num);
 int kosuzu_savequeue_saveFile(KOSUZU_SAVEQUEUE *queue,const char *filename);
 
+// save.cpp
 int kosuzu_save(void **out_buffer, const KOSUZU_SAVEENTRY entries[],const size_t entry_count);
 int kosuzu_saveFile(const char *out_filename,const KOSUZU_SAVEENTRY entries[],const size_t entry_count);
 int kosuzu_saveEX(const KOSUZU_SAVEINFO *save_info);
 
+// record.c
 int kosuzu_recordOpen(KOSUZU_RECORD *archive,FILE *file_ptr);
 int kosuzu_recordOpenFile(KOSUZU_RECORD *archive,const char *src_filename);
 int kosuzu_recordClose(KOSUZU_RECORD *archive);
@@ -155,11 +159,13 @@ const KOSUZU_NODE *kosuzu_recordNodeGetCurFldr(KOSUZU_RECORD *archive);
 KOSUZU_FILE *kosuzu_record_fileOpen(KOSUZU_RECORD *archive,const char *name);
 int kosuzu_record_nodeCheck(KOSUZU_RECORD *record,KOSUZU_NODECHECK_ENTRY name_list[]);
 
+// file.c
 int kosuzu_file_close(KOSUZU_FILE *file);
 int kosuzu_file_seek(KOSUZU_FILE *file,long int offset,int whence);
 size_t kosuzu_file_read(KOSUZU_FILE *file,void *output,size_t size);
 int kosuzu_file_eof(KOSUZU_FILE *file);
 
+// misc.c
 uint32_t kosuzu_hashString(const char *str);
 
 #ifdef __cplusplus
