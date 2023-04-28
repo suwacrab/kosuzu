@@ -174,7 +174,12 @@ uint32_t kosuzu_hashString(const char *str);
 
 /* C++ portion --------------------------------------------------------------*/
 #ifdef __cplusplus
-class CKosuzuRecord: public KOSUZU_RECORD {
+struct CKosuzuNode : public KOSUZU_NODE {
+	public:
+		constexpr int read_int() const { return d.value_sint; }
+		constexpr int read_uint() const { return d.value_uint; }
+};
+class CKosuzuRecord : public KOSUZU_RECORD {
 	public:
 		int close() {
 			return kosuzu_recordClose(this); 
@@ -186,8 +191,8 @@ class CKosuzuRecord: public KOSUZU_RECORD {
 		int chdir(const char *dir_name) { 
 			return kosuzu_recordChdir(this,dir_name);
 		}
-		const KOSUZU_NODE *node_find(const char *name) {
-			return kosuzu_recordNodeFind(this,name);
+		const CKosuzuNode *node_find(const char *name) {
+			return (CKosuzuNode*)kosuzu_recordNodeFind(this,name);
 		}
 		KOSUZU_FILE *file_open(const char *name) { 
 			return kosuzu_record_fileOpen(this,name); 
