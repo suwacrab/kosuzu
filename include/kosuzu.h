@@ -176,8 +176,8 @@ uint32_t kosuzu_hashString(const char *str);
 #ifdef __cplusplus
 struct CKosuzuNode : public KOSUZU_NODE {
 	public:
-		constexpr int read_int() const { return d.value_sint; }
-		constexpr int read_uint() const { return d.value_uint; }
+		constexpr auto read_int() const -> int { return d.value_sint; }
+		constexpr auto read_uint() const -> uint32_t { return d.value_uint; }
 };
 class CKosuzuRecord : public KOSUZU_RECORD {
 	public:
@@ -191,8 +191,11 @@ class CKosuzuRecord : public KOSUZU_RECORD {
 		int chdir(const char *dir_name) { 
 			return kosuzu_recordChdir(this,dir_name);
 		}
-		const CKosuzuNode *node_find(const char *name) {
+		auto node_find(const char *name) -> const CKosuzuNode* {
 			return (CKosuzuNode*)kosuzu_recordNodeFind(this,name);
+		}
+		auto node_check(KOSUZU_NODECHECK_ENTRY name_list[]) -> int {
+			return kosuzu_record_nodeCheck(this,name_list);
 		}
 		KOSUZU_FILE *file_open(const char *name) { 
 			return kosuzu_record_fileOpen(this,name); 
@@ -221,8 +224,6 @@ class CKosuzuSaveQueue : public KOSUZU_SAVEQUEUE {
 		int save_file(const char *filename) {
 			return kosuzu_savequeue_saveFile(this,filename);
 		}
-	private:
-
 };
 
 #endif
