@@ -78,3 +78,12 @@ aligned.
 would've probably been easier if i designed the library with that in mind from
 the beginning...
 
+-- 2023/04/28 ---------------------------------------------------------------@/
+more c++-isms. also, function for checking if nodes exist was added. slight
+naming changes too: i want to make more of the kosuzu_recordXxx() functions
+into the format kosuzu_record_xxx().
+
+most of the useful parts of the library at this point have an easy to use c++
+version, so it just be about ready for production use. kosuzu_file still
+needs to be worked on, though.
+
